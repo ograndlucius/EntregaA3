@@ -1,17 +1,22 @@
 # app/models.py
-from sqlalchemy import Column, Integer, String
-from app.database import Base
+from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import Session
+
+Base = declarative_base()
 
 class Item(Base):
     __tablename__ = "items"
+
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String, index=True)
-    descricao = Column(String)  # Alterado para 'descricao' (não é uma palavra reservada)
+    descricao = Column(String)
     estoque = Column(Integer)
+    preco = Column(Float)
 
     @classmethod
-    def create(cls, db, nome, descricao, estoque):  # Alterado para 'descricao' aqui também
-        item = cls(nome=nome, descricao=descricao, estoque=estoque)
+    def create(cls, db: Session, nome: str, descricao: str, estoque: int, preco: float):
+        item = cls(nome=nome, descricao=descricao, estoque=estoque, preco=preco)
         db.add(item)
         db.commit()
         db.refresh(item)
@@ -19,7 +24,7 @@ class Item(Base):
 
     
     @classmethod
-    def get_all(cls, db, skip=0, limit=10):
+    def get_all(cls, db, skip=0, limit=100):
         return db.query(cls).offset(skip).limit(limit).all()
 
     @classmethod
@@ -27,12 +32,13 @@ class Item(Base):
         return db.query(cls).filter(cls.id == item_id).first()
 
     @classmethod
-    def update(cls, db, item_id, Nome, Desc, Estoque):
+    def update(cls, db, item_id, nome, desc, estoque, preco):
         item = cls.get_by_id(db, item_id)
         if item:
-            item.Nome = Nome  # Alteração aqui
-            item.Desc = Desc  # Alteração aqui
-            item.Estoque = Estoque  # Alteração aqui
+            item.nome = nome  # Alteração aqui
+            item.desc = desc  # Alteração aqui
+            item.estoque = estoque # Alteração aqui
+            item.preco = preco
             db.commit()
             db.refresh(item)
         return item
