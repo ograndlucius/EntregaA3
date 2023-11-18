@@ -2,6 +2,16 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session
+
+# Função de dependência para obter uma sessão do banco de dados.
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 # URL do banco de dados SQLite. O banco será criado no diretório atual.
 DATABASE_URL = "sqlite:///./test.db"
