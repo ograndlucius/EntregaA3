@@ -26,9 +26,6 @@ class ItemDB(Base):
     estoque = Column(Integer)
     preco = Column(Float)
 
-    # Relacionamento com a tabela de pedidos
-    pedidos = relationship("PedidoDB", back_populates="item")
-
     @classmethod
     def create(cls, db: Session, nome: str, descricao: str, estoque: int, preco: float):
         item = cls(nome=nome, descricao=descricao, estoque=estoque, preco=preco)
@@ -88,8 +85,8 @@ class UsuarioDB(Base):
     senha = Column(String)
     is_admin = Column(Boolean)
 
-    # Relacionamento com a tabela de pedidos
-    pedidos = relationship("PedidoDB", back_populates="usuario")
+    # Adicionando relação com pedidos
+    pedidos = relationship("PedidoDB", back_populates="usuario", primaryjoin="UsuarioDB.id == PedidoDB.usuario_id")
 
     @classmethod
     def create(cls, db: Session, usuario_create: UsuarioCreate):
@@ -145,7 +142,6 @@ class PedidoDB(Base):
     quantidade = Column(Integer)
     usuario_id = Column(Integer, ForeignKey("usuarios.id"))
 
-    # Relacionamento com a tabela de usuários
-    usuario = relationship("UsuarioDB", back_populates="pedidos")
-    # Relacionamento com a tabela de itens
-    item = relationship("ItemDB", back_populates="pedidos")
+    # Adicionando relação com usuários
+    usuario = relationship("UsuarioDB", back_populates="pedidos", primaryjoin="UsuarioDB.id == PedidoDB.usuario_id")
+

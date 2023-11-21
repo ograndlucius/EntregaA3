@@ -48,7 +48,7 @@ def seed_data():
     {'nome': "Gabriel Badas",         "email": "gbadas@globomail.com",  "senha": "gbadas2023",  "is_admin": True},
     {'nome': "Lucius Nascimento",     "email": "lucius2010@yahoo.com",  "senha": "clucius2023", "is_admin": False},
     {'nome': "Professor Xavier",      "email": "xaviersisdb@gmail.com", "senha": "gbadas2023",  "is_admin": True},
-    {'nome': "Vivian Santana",        "email": "adv.vivi@gov.br",       "senha": "clucius2023", "is_admin": False},
+    {'nome': "Vivian Santana",        "email": "adv.vivi@gov.br",       "senha": "advivi2023", "is_admin": False},
     ]
     for user in users:
         models.UsuarioDB.create(db, models.UsuarioCreate(**user))
@@ -73,6 +73,8 @@ def seed_data():
     db.close()
 # Chama a função seed_data sempre que o aplicativo for iniciado ou reiniciado
 seed_data()
+
+
 
 ## ROTAS ##########################################################################################################################################
 
@@ -149,8 +151,8 @@ def delete_usuario(usuario_id: int, db: Session = Depends(database.get_db)):
 
 # OPERAÇÕES GERAIS ################################################################################################################################################
 # Rota para fazer um pedido de compra
-@app.post("/pedido/adicionar/{usuario_id}", response_model=PedidoResponse)
-def add_pedido(usuario_id: int, pedido_create: PedidoCreate, db: Session = Depends(database.get_db)):
+@app.post("/pedido/adicionar/{usuario_id}", response_model=models.PedidoResponse)
+def add_pedido(usuario_id: int, pedido_create: models.PedidoCreate, db: Session = Depends(database.get_db)):
     # Verifica se o usuário é válido
     usuario = models.UsuarioDB.get_by_id(db, usuario_id)
     if not usuario:
@@ -176,6 +178,10 @@ def add_pedido(usuario_id: int, pedido_create: PedidoCreate, db: Session = Depen
             usuario_id=usuario_id
         )
         db.add(pedido)
+        db.commit()
+
+        # Relaciona o pedido ao usuário
+        usuario.pedidos.append(pedido)
         db.commit()
 
         print(f"Pedido recebido de {usuario.nome}. Valor total: {valor_total}")
