@@ -34,7 +34,7 @@ class PedidoResponse(BaseModel):
     usuario_id: int
 
     class Config:
-        orm_mode = True
+        from_attribute = True
 
 
 # Função para popular o banco de dados com dados de exemplo.
@@ -48,7 +48,7 @@ def seed_data():
     {'nome': "Gabriel Badas",         "email": "gbadas@globomail.com",  "senha": "gbadas2023",  "is_admin": True},
     {'nome': "Lucius Nascimento",     "email": "lucius2010@yahoo.com",  "senha": "clucius2023", "is_admin": False},
     {'nome': "Professor Xavier",      "email": "xaviersisdb@gmail.com", "senha": "gbadas2023",  "is_admin": True},
-    {'nome': "Vivian Santana",        "email": "adv.vivi@gov.br",       "senha": "advivi2023", "is_admin": False},
+    {'nome': "Vivian Santana",        "email": "adv.vivi@gov.br",       "senha": "advivi2023",  "is_admin": False},
     ]
     for user in users:
         models.UsuarioDB.create(db, models.UsuarioCreate(**user))
@@ -62,7 +62,7 @@ def seed_data():
     {'nome': "Bacalhau do Atlântico", "descricao": "Bacalhau do Atlântico, clássico em pratos de bacalhau.",           "estoque": 20,  "preco": 29.99},
     {'nome': "Robalo Fresco",         "descricao": "Robalo fresco, excelente para grelhados e pratos assados.",        "estoque": 18,  "preco": 16.99},
     {'nome': "Peixe-gato de Cultivo", "descricao": "Peixe-gato de cultivo, ideal para frituras e ensopados.",          "estoque": 14,  "preco": 8.99 },
-    {'nome': "Lula Limpa",            "descricao": "Lula limpa, pronta para preparar pratos de frutos do mar.",        "estoque": 6,   "preco": 22.99}, 
+    {'nome': "Lula",                  "descricao": "Lula limpa, pronta para preparar pratos de frutos do mar.",        "estoque": 6,   "preco": 22.99}, 
     {'nome': "Camarão Fresco",        "descricao": "Camarão fresco, ótimo para pratos como paella e camarão ao alho.", "estoque": 5,   "preco": 18.99}, 
     ]
     
