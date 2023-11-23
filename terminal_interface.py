@@ -170,19 +170,21 @@ def update_item():
     estoque = input("Digite a nova quantidade em estoque (ou pressione Enter para manter a atual): ")
     preco = input("Digite o novo preço (ou pressione Enter para manter o atual): ")
 
-    # Construir a string de URL com base nos campos fornecidos
-    url = f'http PUT http://localhost:8000/estoque/atualizar/{item_id}'
-    if nome:
-        url += f' nome="{nome}"'
-    if descricao:
-        url += f' descricao="{descricao}"'
-    if estoque:
-        url += f' estoque:={estoque}'
-    if preco:
-        url += f' preco:={preco}'
+    url = f'http://localhost:8000/estoque/atualizar/{item_id}'
 
-    response = subprocess.check_output(url, shell=True)
+    params = {}
+    if nome:
+        params['nome'] = nome
+    if descricao:
+        params['descricao'] = descricao
+    if estoque:
+        params['estoque'] = int(estoque)
+    if preco:
+        params['preco'] = float(preco)
+
+    response = subprocess.check_output(['http', 'PUT', url], input=json.dumps(params), text=True)
     print("Informações do item atualizadas com sucesso.")
+
 # ATUALIZAR INFORMAÇÕES DE UM USUÁRIO
 def update_user():
     user_id = input("\nDigite o ID do usuário que deseja atualizar: ")
@@ -191,19 +193,21 @@ def update_user():
     senha = input("Digite a nova senha (ou pressione Enter para manter a atual): ")
     is_admin = input("O usuário é administrador? (True/False, ou pressione Enter para manter o atual): ")
 
-    # Construir a string de URL com base nos campos fornecidos
-    url = f'http PUT http://localhost:8000/usuarios/atualizar/{user_id}'
-    if nome:
-        url += f' nome="{nome}"'
-    if email:
-        url += f' email="{email}"'
-    if senha:
-        url += f' senha="{senha}"'
-    if is_admin:
-        url += f' is_admin={is_admin}'
+    url = f'http://localhost:8000/usuarios/atualizar/{user_id}'
 
-    response = subprocess.check_output(url, shell=True)
+    params = {}
+    if nome:
+        params['nome'] = nome
+    if email:
+        params['email'] = email
+    if senha:
+        params['senha'] = senha
+    if is_admin:
+        params['is_admin'] = bool(is_admin)
+
+    response = subprocess.check_output(['http', 'PUT', url], input=json.dumps(params), text=True)
     print("Informações do usuário atualizadas com sucesso.")
+
 
 # RESPONSAVEL PELA FORMATAÇÃO DOS REPOSTAS JSON #
 def display_response(response):
