@@ -29,8 +29,10 @@ def show_menu():
         print("6. Adicionar um novo usuário")
         print("7. Deletar um item do estoque")
         print("8. Deletar um usuário")
-        print("9. Fazer um pedido de compra")
-        print("10. Sair")
+        print("9. Atualizar informações de um item")
+        print("10. Atualizar informações de um usuário")
+        print("11. Fazer um pedido de compra")
+        print("12. Sair")
 
         choice = input("Digite o número da opção desejada: ")
 
@@ -60,8 +62,14 @@ def show_menu():
             delete_user()
         elif choice == "9":
             clear_terminal()
-            make_purchase()
+            update_item()
         elif choice == "10":
+            clear_terminal()
+            update_user()
+        elif choice == "11":
+            clear_terminal()
+            make_purchase()
+        elif choice == "12":
             print("Até logo!")
             break
         else:
@@ -138,6 +146,66 @@ def delete_user():
     print("Usuário deletado com sucesso.")
 
 #RESPONSAVEL PELA FORMATAÇÃO DOS REPOSTAS JSON #
+def display_response(response):
+    data = json.loads(response)
+    
+    if isinstance(data, list):
+        for item in data:
+            print("=" * 25)
+            for key, value in item.items():
+                formatted_value = colored(value, 'yellow') if key == 'preco' else colored(value, 'green')
+                print(f"{key.capitalize()}: {formatted_value}")
+    else:
+        print("=" * 25)
+        for key, value in data.items():
+            formatted_value = colored(value, 'yellow') if key == 'preco' else colored(value, 'green')
+            print(f"{key.capitalize()}: {formatted_value}")
+    print("=" * 25)
+    
+# ATUALIZAR INFORMAÇÕES DE UM ITEM
+def update_item():
+    item_id = input("\nDigite o ID do item que deseja atualizar: ")
+    nome = input("Digite o novo nome (ou pressione Enter para manter o atual): ")
+    descricao = input("Digite a nova descrição (ou pressione Enter para manter a atual): ")
+    estoque = input("Digite a nova quantidade em estoque (ou pressione Enter para manter a atual): ")
+    preco = input("Digite o novo preço (ou pressione Enter para manter o atual): ")
+
+    # Construir a string de URL com base nos campos fornecidos
+    url = f'http PUT http://localhost:8000/estoque/atualizar/{item_id}'
+    if nome:
+        url += f' nome="{nome}"'
+    if descricao:
+        url += f' descricao="{descricao}"'
+    if estoque:
+        url += f' estoque:={estoque}'
+    if preco:
+        url += f' preco:={preco}'
+
+    response = subprocess.check_output(url, shell=True)
+    print("Informações do item atualizadas com sucesso.")
+# ATUALIZAR INFORMAÇÕES DE UM USUÁRIO
+def update_user():
+    user_id = input("\nDigite o ID do usuário que deseja atualizar: ")
+    nome = input("Digite o novo nome (ou pressione Enter para manter o atual): ")
+    email = input("Digite o novo email (ou pressione Enter para manter o atual): ")
+    senha = input("Digite a nova senha (ou pressione Enter para manter a atual): ")
+    is_admin = input("O usuário é administrador? (True/False, ou pressione Enter para manter o atual): ")
+
+    # Construir a string de URL com base nos campos fornecidos
+    url = f'http PUT http://localhost:8000/usuarios/atualizar/{user_id}'
+    if nome:
+        url += f' nome="{nome}"'
+    if email:
+        url += f' email="{email}"'
+    if senha:
+        url += f' senha="{senha}"'
+    if is_admin:
+        url += f' is_admin={is_admin}'
+
+    response = subprocess.check_output(url, shell=True)
+    print("Informações do usuário atualizadas com sucesso.")
+
+# RESPONSAVEL PELA FORMATAÇÃO DOS REPOSTAS JSON #
 def display_response(response):
     data = json.loads(response)
     

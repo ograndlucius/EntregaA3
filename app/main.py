@@ -36,6 +36,9 @@ class PedidoResponse(BaseModel):
     class Config:
         from_attribute = True
 
+class UsuarioDeleteResponse(models.BaseModel):
+    message: str
+
 
 # Função para popular o banco de dados com dados de exemplo.
 def seed_data():
@@ -134,7 +137,7 @@ def read_usuario(usuario_id: int, db: Session = Depends(database.get_db)):
     return usuario
 
 # Rota para atualizar um usuário por ID
-@app.put("/usuarios/atualizar/{usuario_id}", response_model=models.Usuario)
+@app.put("/usuarios/atualizar/{usuario_id}", response_model=models.UsuarioBase)
 def update_usuario(usuario_id: int, usuario_update: UsuarioCreate, db: Session = Depends(database.get_db)):
     updated_usuario = models.UsuarioDB.update(db, usuario_id, usuario_update)
     if updated_usuario is None:
@@ -142,7 +145,7 @@ def update_usuario(usuario_id: int, usuario_update: UsuarioCreate, db: Session =
     return updated_usuario
 
 # Rota para excluir um usuário por ID
-@app.delete("/usuarios/remover/{usuario_id}", response_model=models.Usuario)
+@app.delete("/usuarios/remover/{usuario_id}", response_model=UsuarioDeleteResponse)
 def delete_usuario(usuario_id: int, db: Session = Depends(database.get_db)):
     deleted_usuario = models.UsuarioDB.delete(db, usuario_id)
     if deleted_usuario is None:
@@ -184,7 +187,7 @@ def add_pedido(usuario_id: int, pedido_create: models.PedidoCreate, db: Session 
         usuario.pedidos.append(pedido)
         db.commit()
 
-        print(f"Pedido recebido de {usuario.nome}. Valor total: {valor_total}")
+    
 
         return pedido
     else:

@@ -128,7 +128,7 @@ class PedidoResponse(BaseModel):
     usuario_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PedidoCreate(BaseModel):
     item_id: int
