@@ -8,6 +8,16 @@ def clear_terminal():
     subprocess.call('cls', shell=True)
 
 #CORPO PRINCIPAL DO MENU
+import subprocess
+import json
+from termcolor import colored
+from app import database
+
+# LIMPAR OS COMANDOS APÓS A EXECUÇÃO DE OUTRO
+def clear_terminal():
+    subprocess.call('cls', shell=True)
+
+#CORPO PRINCIPAL DO MENU
 def show_menu():
     while True:
         print("\nEscolha uma opção:")
@@ -17,8 +27,10 @@ def show_menu():
         print("4. Visualizar todos os usuários")
         print("5. Visualizar detalhes de um usuário")
         print("6. Adicionar um novo usuário")
-        print("7. Fazer um pedido de compra")
-        print("8. Sair")
+        print("7. Deletar um item do estoque")
+        print("8. Deletar um usuário")
+        print("9. Fazer um pedido de compra")
+        print("10. Sair")
 
         choice = input("Digite o número da opção desejada: ")
 
@@ -42,8 +54,14 @@ def show_menu():
             add_new_user()
         elif choice == "7":
             clear_terminal()
-            make_purchase()
+            delete_item()
         elif choice == "8":
+            clear_terminal()
+            delete_user()
+        elif choice == "9":
+            clear_terminal()
+            make_purchase()
+        elif choice == "10":
             print("Até logo!")
             break
         else:
@@ -106,6 +124,18 @@ def make_purchase():
         valor_total = data['preco'] * data['quantidade']
         print(f"Valor total da compra: R${valor_total}")
         print(f"Quantidade comprada: {data['quantidade']}")
+
+# DELETAR UM ITEM DO ESTOQUE
+def delete_item():
+    item_id = input("\nDigite o ID do item que deseja deletar: ")
+    response = subprocess.check_output(f'http DELETE http://localhost:8000/estoque/remove/{item_id}', shell=True)
+    print("Item deletado com sucesso.")
+
+# DELETAR UM USUÁRIO
+def delete_user():
+    user_id = input("\nDigite o ID do usuário que deseja deletar: ")
+    response = subprocess.check_output(f'http DELETE http://localhost:8000/usuarios/remover/{user_id}', shell=True)
+    print("Usuário deletado com sucesso.")
 
 #RESPONSAVEL PELA FORMATAÇÃO DOS REPOSTAS JSON #
 def display_response(response):
