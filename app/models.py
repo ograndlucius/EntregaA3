@@ -18,12 +18,13 @@ class Item(ItemBase):
         from_attributes = True
 
 class ItemDB(Base):
-    __tablename__ = "items"
+    __tablename__ = "itens"
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String, index=True)
-    descricao = Column(String)
+    descricao = Column(String, index=True)
     estoque = Column(Integer)
     preco = Column(Float)
+
 
     @classmethod
     def create(cls, db: Session, nome: str, descricao: str, estoque: int, preco: float):
@@ -64,8 +65,6 @@ class ItemDB(Base):
 class UsuarioBase(BaseModel):
     nome: str
     email: str
-    senha: str
-    is_admin: bool
 
 class UsuarioCreate(UsuarioBase):
     pass
@@ -81,11 +80,7 @@ class UsuarioDB(Base):
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String, index=True)
     email = Column(String, unique=True, index=True)
-    senha = Column(String)
-    is_admin = Column(Boolean)
-
-    # Adicionando relação com pedidos
-    pedidos = relationship("PedidoDB", back_populates="usuario", primaryjoin="UsuarioDB.id == PedidoDB.usuario_id")
+    pedidos = relationship("PedidoDB", back_populates="usuario")
 
     @classmethod
     def create(cls, db: Session, usuario_create: UsuarioCreate):
@@ -136,11 +131,13 @@ class PedidoCreate(BaseModel):
 
 class PedidoDB(Base):
     __tablename__ = "pedidos"
+
     id = Column(Integer, primary_key=True, index=True)
-    item_id = Column(Integer, ForeignKey("items.id"))
     quantidade = Column(Integer)
+    item_id = Column(Integer, ForeignKey("itens.id"))
     usuario_id = Column(Integer, ForeignKey("usuarios.id"))
 
-    # Adicionando relação com usuários
-    usuario = relationship("UsuarioDB", back_populates="pedidos", primaryjoin="UsuarioDB.id == PedidoDB.usuario_id")
+    usuario = relationship("UsuarioDB", back_populates="pedidos")
+    item = relationship("ItemDB")
+
 

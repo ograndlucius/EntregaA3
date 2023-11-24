@@ -1,38 +1,32 @@
 import subprocess
 import json
 from termcolor import colored
-from app import database
 
 # LIMPAR OS COMANDOS APÓS A EXECUÇÃO DE OUTRO
 def clear_terminal():
     subprocess.call('cls', shell=True)
 
-#CORPO PRINCIPAL DO MENU
-import subprocess
-import json
-from termcolor import colored
-from app import database
-
-# LIMPAR OS COMANDOS APÓS A EXECUÇÃO DE OUTRO
-def clear_terminal():
-    subprocess.call('cls', shell=True)
-
-#CORPO PRINCIPAL DO MENU
+# CORPO PRINCIPAL DO MENU
 def show_menu():
     while True:
-        print("\nEscolha uma opção:")
-        print("1. Visualizar todos os itens no estoque")
-        print("2. Visualizar detalhes de um item")
-        print("3. Adicionar um novo item ao estoque")
-        print("4. Visualizar todos os usuários")
-        print("5. Visualizar detalhes de um usuário")
-        print("6. Adicionar um novo usuário")
-        print("7. Deletar um item do estoque")
-        print("8. Deletar um usuário")
-        print("9. Atualizar informações de um item")
-        print("10. Atualizar informações de um usuário")
-        print("11. Fazer um pedido de compra")
-        print("12. Sair")
+        print(colored("=" * 62, 'magenta'))
+        print(colored("Escolha uma opção:", 'blue'))
+        print(colored("=" * 25, 'magenta'), colored("(Estoque)", 'green'), colored("=" * 25, 'magenta'))
+        print(colored("1. Visualizar todos os itens no estoque", 'yellow'))
+        print(colored("2. Visualizar detalhes de um item", 'yellow'))
+        print(colored("3. Adicionar um novo item ao estoque", 'yellow'))
+        print(colored("4. Atualizar informações de um item", 'yellow'))
+        print(colored("6. Deletar um item do estoque", 'yellow'))
+        print(colored("=" * 25, 'magenta'), colored("(Usuários)", 'green'), colored("=" * 25,'magenta'))
+        print(colored("6. Visualizar todos os usuários", 'yellow'))
+        print(colored("7. Visualizar detalhes de um usuário", 'yellow'))
+        print(colored("8. Adicionar um novo usuário", 'yellow'))
+        print(colored("9. Deletar um usuário", 'yellow'))
+        print(colored("10. Atualizar informações de um usuário", 'yellow'))
+        print(colored("11. Fazer um pedido de compra", 'yellow'))
+        print(colored("=" * 62, 'magenta'))
+        print(colored("12. Sair", 'blue'))
+        print(colored("=" * 62, 'magenta'))
 
         choice = input("Digite o número da opção desejada: ")
 
@@ -195,17 +189,18 @@ def update_user():
 
     url = f'http://localhost:8000/usuarios/atualizar/{user_id}'
 
-    params = {}
-    if nome:
-        params['nome'] = nome
-    if email:
-        params['email'] = email
-    if senha:
-        params['senha'] = senha
-    if is_admin:
-        params['is_admin'] = bool(is_admin)
+    args = ['http', 'PUT', url]
 
-    response = subprocess.check_output(['http', 'PUT', url], input=json.dumps(params), text=True)
+    if nome:
+        args.append(f'nome={nome}')
+    if email:
+        args.append(f'email={email}')
+    if senha:
+        args.append(f'senha={senha}')
+    if is_admin:
+        args.append(f'is_admin={is_admin}')
+
+    response = subprocess.check_output(args, text=True)
     print("Informações do usuário atualizadas com sucesso.")
 
 
@@ -215,16 +210,16 @@ def display_response(response):
     
     if isinstance(data, list):
         for item in data:
-            print("=" * 25)
+            print(colored("=" * 62, 'blue'))
             for key, value in item.items():
                 formatted_value = colored(value, 'yellow') if key == 'preco' else colored(value, 'green')
                 print(f"{key.capitalize()}: {formatted_value}")
     else:
-        print("=" * 25)
+        print(colored("=" * 62, 'blue'))
         for key, value in data.items():
             formatted_value = colored(value, 'yellow') if key == 'preco' else colored(value, 'green')
             print(f"{key.capitalize()}: {formatted_value}")
-    print("=" * 25)
+        print(colored("=" * 62, 'blue'))
 
 if __name__ == "__main__":
     show_menu()

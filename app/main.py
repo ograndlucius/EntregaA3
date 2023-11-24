@@ -20,8 +20,6 @@ class ItemCreate(BaseModel):
 class UsuarioCreate(BaseModel):
     nome: str
     email: str
-    senha: str
-    is_admin: bool
 
 class PedidoCreate(BaseModel):
     item_id: int
@@ -39,34 +37,34 @@ class PedidoResponse(BaseModel):
 class UsuarioDeleteResponse(models.BaseModel):
     message: str
 
-
 # Função para popular o banco de dados com dados de exemplo.
 def seed_data():
     db = database.SessionLocal()
     db.query(models.ItemDB).delete()
     db.query(models.UsuarioDB).delete()
+    db.query(models.PedidoDB).delete()
 
     users = [
-    {'nome': "Adailton Lima Segundo", "email": "adlima@bol.com",        "senha": "adlima2023",  "is_admin": False},
-    {'nome': "Gabriel Badas",         "email": "gbadas@globomail.com",  "senha": "gbadas2023",  "is_admin": True},
-    {'nome': "Lucius Nascimento",     "email": "lucius2010@yahoo.com",  "senha": "clucius2023", "is_admin": False},
-    {'nome': "Professor Xavier",      "email": "xaviersisdb@gmail.com", "senha": "gbadas2023",  "is_admin": True},
-    {'nome': "Vivian Santana",        "email": "adv.vivi@gov.br",       "senha": "advivi2023",  "is_admin": False},
+        {'nome': "Adailton Lima Segundo", "email": "adlima@bol.com"},
+        {'nome': "Gabriel Badas",         "email": "gbadas@globomail.com"},
+        {'nome': "Lucius Nascimento",     "email": "lucius2010@yahoo.com"},
+        {'nome': "Professor Xavier",      "email": "xaviersisdb@gmail.com"},
+        {'nome': "Vivian Santana",        "email": "adv.vivi@gov.br"},
     ]
     for user in users:
         models.UsuarioDB.create(db, models.UsuarioCreate(**user))
 
     products = [
-    {'nome': "Tilápia Fresca",        "descricao": "Tilápia fresca, perfeita para grelhados e assados.",               "estoque": 10,  "preco": 9.99 },
-    {'nome': "Atum Selvagem",         "descricao": "Atum selvagem, ideal para sashimi e pratos de peixe cru.",         "estoque": 8,   "preco": 19.99},
-    {'nome': "Salmão do Atlântico",   "descricao": "Salmão do Atlântico, rico em ácidos graxos ômega-3.",              "estoque": 12,  "preco": 14.99},
-    {'nome': "Linguado Fresco",       "descricao": "Linguado fresco, delicado e perfeito para pratos gourmet.",        "estoque": 7,   "preco": 24.99},
-    {'nome': "Truta Arco-Íris",       "descricao": "Truta arco-íris, saborosa e versátil em várias receitas.",         "estoque": 10,  "preco": 12.99},
-    {'nome': "Bacalhau do Atlântico", "descricao": "Bacalhau do Atlântico, clássico em pratos de bacalhau.",           "estoque": 20,  "preco": 29.99},
-    {'nome': "Robalo Fresco",         "descricao": "Robalo fresco, excelente para grelhados e pratos assados.",        "estoque": 18,  "preco": 16.99},
-    {'nome': "Peixe-gato de Cultivo", "descricao": "Peixe-gato de cultivo, ideal para frituras e ensopados.",          "estoque": 14,  "preco": 8.99 },
-    {'nome': "Lula",                  "descricao": "Lula limpa, pronta para preparar pratos de frutos do mar.",        "estoque": 6,   "preco": 22.99}, 
-    {'nome': "Camarão Fresco",        "descricao": "Camarão fresco, ótimo para pratos como paella e camarão ao alho.", "estoque": 5,   "preco": 18.99}, 
+        {'nome': "Tilápia Fresca",        "descricao": "Tilápia fresca, perfeita para grelhados e assados.",               "estoque": 10,  "preco": 9.99 },
+        {'nome': "Atum Selvagem",         "descricao": "Atum selvagem, ideal para sashimi e pratos de peixe cru.",         "estoque": 8,   "preco": 19.99},
+        {'nome': "Salmão do Atlântico",   "descricao": "Salmão do Atlântico, rico em ácidos graxos ômega-3.",              "estoque": 12,  "preco": 14.99},
+        {'nome': "Linguado Fresco",       "descricao": "Linguado fresco, delicado e perfeito para pratos gourmet.",        "estoque": 7,   "preco": 24.99},
+        {'nome': "Truta Arco-Íris",       "descricao": "Truta arco-íris, saborosa e versátil em várias receitas.",         "estoque": 10,  "preco": 12.99},
+        {'nome': "Bacalhau do Atlântico", "descricao": "Bacalhau do Atlântico, clássico em pratos de bacalhau.",           "estoque": 20,  "preco": 29.99},
+        {'nome': "Robalo Fresco",         "descricao": "Robalo fresco, excelente para grelhados e pratos assados.",        "estoque": 18,  "preco": 16.99},
+        {'nome': "Peixe-gato de Cultivo", "descricao": "Peixe-gato de cultivo, ideal para frituras e ensopados.",          "estoque": 14,  "preco": 8.99 },
+        {'nome': "Lula",                  "descricao": "Lula limpa, pronta para preparar pratos de frutos do mar.",        "estoque": 6,   "preco": 22.99}, 
+        {'nome': "Camarão Fresco",        "descricao": "Camarão fresco, ótimo para pratos como paella e camarão ao alho.", "estoque": 5,   "preco": 18.99}, 
     ]
     
     for product in products: 
@@ -74,10 +72,9 @@ def seed_data():
         print(f"Item criado: {item}")
 
     db.close()
+
 # Chama a função seed_data sempre que o aplicativo for iniciado ou reiniciado
 seed_data()
-
-
 
 ## ROTAS DE ESTOQUE ##########################################################################################################################################
 
