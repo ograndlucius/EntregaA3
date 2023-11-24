@@ -1,6 +1,8 @@
 import subprocess
 import json
 from termcolor import colored
+from colorama import Fore, Back, Style, init
+init()
 
 # LIMPAR OS COMANDOS APÓS A EXECUÇÃO DE OUTRO
 def clear_terminal():
@@ -9,24 +11,24 @@ def clear_terminal():
 # CORPO PRINCIPAL DO MENU
 def show_menu():
     while True:
-        print(colored("=" * 62, 'magenta'))
-        print(colored("Escolha uma opção:", 'blue'))
-        print(colored("=" * 25, 'magenta'), colored("(Estoque)", 'green'), colored("=" * 25, 'magenta'))
-        print(colored("1. Visualizar todos os itens no estoque", 'yellow'))
-        print(colored("2. Visualizar detalhes de um item", 'yellow'))
-        print(colored("3. Adicionar um novo item ao estoque", 'yellow'))
-        print(colored("4. Atualizar informações de um item", 'yellow'))
-        print(colored("6. Deletar um item do estoque", 'yellow'))
-        print(colored("=" * 25, 'magenta'), colored("(Usuários)", 'green'), colored("=" * 25,'magenta'))
-        print(colored("6. Visualizar todos os usuários", 'yellow'))
-        print(colored("7. Visualizar detalhes de um usuário", 'yellow'))
-        print(colored("8. Adicionar um novo usuário", 'yellow'))
-        print(colored("9. Deletar um usuário", 'yellow'))
-        print(colored("10. Atualizar informações de um usuário", 'yellow'))
-        print(colored("11. Fazer um pedido de compra", 'yellow'))
-        print(colored("=" * 62, 'magenta'))
-        print(colored("12. Sair", 'blue'))
-        print(colored("=" * 62, 'magenta'))
+        print(Fore.MAGENTA + "=" * 62)
+        print(Fore.YELLOW + "Escolha uma opção:")
+        print(Fore.MAGENTA + "=" * 25 + Style.RESET_ALL + Fore.YELLOW + "(Estoque)" + Fore.MAGENTA + "=" * 25)
+        print(Fore.GREEN + "1. Visualizar todos os itens no estoque")
+        print("2. Visualizar detalhes de um item")
+        print("3. Adicionar um novo item ao estoque")
+        print("4. Atualizar informações de um item")
+        print("6. Deletar um item do estoque")
+        print(Fore.MAGENTA + "=" * 25 + Style.RESET_ALL + Fore.YELLOW + "(Usuários)" + Fore.MAGENTA + "=" * 25)
+        print(Fore.GREEN + "6. Visualizar todos os usuários")
+        print("7. Visualizar detalhes de um usuário")
+        print("8. Adicionar um novo usuário")
+        print("9. Deletar um usuário")
+        print("10. Atualizar informações de um usuário")
+        print("11. Fazer um pedido de compra")
+        print(Fore.MAGENTA+ "=" * 62 + Style.RESET_ALL)
+        print(Fore.YELLOW + "12. Sair")
+        print(Fore.MAGENTA + "=" * 62 + Style.RESET_ALL)
 
         choice = input("Digite o número da opção desejada: ")
 
@@ -210,16 +212,16 @@ def display_response(response):
     
     if isinstance(data, list):
         for item in data:
-            print(colored("=" * 62, 'blue'))
+            print(Fore.YELLOW + "=" * 62)
             for key, value in item.items():
-                formatted_value = colored(value, 'yellow') if key == 'preco' else colored(value, 'green')
+                formatted_value = Fore.YELLOW + str(value) if key == 'preco' else Fore.GREEN + str(value)
                 print(f"{key.capitalize()}: {formatted_value}")
     else:
-        print(colored("=" * 62, 'blue'))
+        print(Fore.YELLOW + "=" * 62)
         for key, value in data.items():
-            formatted_value = colored(value, 'yellow') if key == 'preco' else colored(value, 'green')
+            formatted_value = Fore.YELLOW + str(value) if key == 'preco' else Fore.GREEN + str(value)
             print(f"{key.capitalize()}: {formatted_value}")
-        print(colored("=" * 62, 'blue'))
+        print(Fore.YELLOW + "=" * 62 + Style.RESET_ALL)
 
 if __name__ == "__main__":
     show_menu()
