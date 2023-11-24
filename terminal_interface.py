@@ -56,7 +56,7 @@ def show_menu():
         elif choice == "8":
             clear_terminal()
             delete_user()
-        elif choice == "9":
+        elif choice == "4":
             clear_terminal()
             update_item()
         elif choice == "10":
@@ -212,16 +212,20 @@ def display_response(response):
     
     if isinstance(data, list):
         for item in data:
-            print(Fore.YELLOW + "=" * 62)
+            print(Fore.MAGENTA + "=" * 62 + Style.RESET_ALL)
             for key, value in item.items():
-                formatted_value = Fore.YELLOW + str(value) if key == 'preco' else Fore.GREEN + str(value)
+                formatted_value = (
+                    Fore.YELLOW + str(value) + Style.RESET_ALL if key == 'preco' else str(value)
+                )
                 print(f"{key.capitalize()}: {formatted_value}")
     else:
-        print(Fore.YELLOW + "=" * 62)
+        print(Fore.MAGENTA + "=" * 62 + Style.RESET_ALL)
         for key, value in data.items():
-            formatted_value = Fore.YELLOW + str(value) if key == 'preco' else Fore.GREEN + str(value)
+            formatted_value = (
+                Fore.YELLOW + str(value) + Style.RESET_ALL if key == 'preco' else str(value)
+            )
             print(f"{key.capitalize()}: {formatted_value}")
-        print(Fore.YELLOW + "=" * 62 + Style.RESET_ALL)
+        print(Fore.MAGENTA + "=" * 62 + Style.RESET_ALL)
 
 if __name__ == "__main__":
     show_menu()
