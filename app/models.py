@@ -1,7 +1,12 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, relationship
 from pydantic import BaseModel
+from sqlalchemy import func, label
+from . import models
+from fastapi import Depends
+from . import database
+
 
 Base = declarative_base()
 
@@ -140,4 +145,89 @@ class PedidoDB(Base):
     usuario = relationship("UsuarioDB", back_populates="pedidos")
     item = relationship("ItemDB")
 
+
+class ProductReport(BaseModel):
+    nome: str
+    quantidade_vendida: int
+
+class ProductCustomerReport(BaseModel):
+    nome_produto: str
+    nome_cliente: str
+    quantidade_comprada: int
+
+class AvgConsumptionReport(BaseModel):
+    nome_cliente: str
+    produto_mais_comprado: str
+    consumo_medio_quantidade: float
+    consumo_medio_preco: float
+
+class AvgConsumptionResponse(BaseModel):
+    response: list[AvgConsumptionReport]
+
+class LowStockProductReport(BaseModel):
+    nome: str
+    estoque: int
+
+    
+
+def get_top_sold_products(db: Session, top_count: int = 3):
+    result = (
+        db.query(models.ItemDB.nome, func.sum(models.PedidoDB.quantidade).label("quantidade_vendida"))
+        .join(models.PedidoDB)
+        .group_by(models.ItemDB.nome)
+        .order_by(func.sum(models.PedidoDB.quantidade).desc())
+        .limit(top_count)
+        .all()
+    )
+    return result
+
+def get_product_by_customer_report(db: Session):
+    result = (
+        db.query(
+            models.ItemDB.nome.label("nome_produto"),
+            models.UsuarioDB.nome.label("nome_cliente"),
+            func.sum(models.PedidoDB.quantidade).label("quantidade_comprada")
+        )
+        .join(models.PedidoDB, models.PedidoDB.item_id == models.ItemDB.id)
+        .join(models.UsuarioDB, models.PedidoDB.usuario_id == models.UsuarioDB.id)
+        .group_by(models.ItemDB.nome, models.UsuarioDB.nome)
+        .all()
+    )
+    return result
+
+
+
+def get_avg_consumption_by_customer_report(db: Session = Depends(database.get_db)) -> AvgConsumptionResponse:
+    result = (
+        db.query(
+            UsuarioDB.nome.label("nome_cliente"),
+            func.max(ItemDB.nome).label("produto_mais_comprado"),
+            label("consumo_medio_quantidade", func.avg(PedidoDB.quantidade)),
+            label("consumo_medio_preco", func.avg(ItemDB.preco))
+        )
+        .select_from(UsuarioDB)
+        .join(PedidoDB)
+        .join(ItemDB)
+        .group_by(UsuarioDB.nome)
+        .all()
+    )
+    
+    response_data = [
+        {
+            "nome_cliente": nome_cliente,
+            "produto_mais_comprado": produto_mais_comprado,
+            "consumo_medio": {
+            "quantidade": float(consumo_medio_quantidade),
+            "preco": float(consumo_medio_preco)
+            }
+        }
+        for nome_cliente, produto_mais_comprado, consumo_medio_quantidade, consumo_medio_preco in result
+    ]
+
+    return AvgConsumptionResponse(response=response_data)
+
+
+def get_low_stock_products_report(db: Session):
+    result = db.query(models.ItemDB.nome, models.ItemDB.estoque).filter(models.ItemDB.estoque <= 3).all()
+    return [{"nome": nome, "estoque": estoque} for nome, estoque in result]
 

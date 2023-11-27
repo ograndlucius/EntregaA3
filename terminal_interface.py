@@ -41,19 +41,19 @@ def show_menu():
         elif choice == "3":
             clear_terminal()
             add_new_item()
-        elif choice == "4":
-            clear_terminal()
-            view_all_users()
-        elif choice == "5":
-            clear_terminal()
-            view_user_details()
         elif choice == "6":
             clear_terminal()
-            add_new_user()
+            view_all_users()
         elif choice == "7":
             clear_terminal()
-            delete_item()
+            view_user_details()
         elif choice == "8":
+            clear_terminal()
+            add_new_user()
+        elif choice == "6":
+            clear_terminal()
+            delete_item()
+        elif choice == "9":
             clear_terminal()
             delete_user()
         elif choice == "4":

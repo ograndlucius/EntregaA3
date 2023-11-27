@@ -3,8 +3,11 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from app import models, database
 from pydantic import BaseModel
-from sqlalchemy import Boolean
 from typing import List
+from app import models
+
+
+
 
 app = FastAPI()
 
@@ -37,12 +40,29 @@ class PedidoResponse(BaseModel):
 class UsuarioDeleteResponse(models.BaseModel):
     message: str
 
+class ProductReport(BaseModel):
+    nome: str
+    quantidade_vendida: int
+
+class ProductCustomerReport(BaseModel):
+    nome_produto: str
+    nome_cliente: str
+    quantidade_comprada: int
+
+class AvgConsumptionReport(BaseModel):
+    nome_cliente: str
+    consumo_medio: float
+
+class LowStockProductReport(BaseModel):
+    nome: str
+    estoque: int
+
 # Função para popular o banco de dados com dados de exemplo.
 def seed_data():
     db = database.SessionLocal()
     db.query(models.ItemDB).delete()
     db.query(models.UsuarioDB).delete()
-    db.query(models.PedidoDB).delete()
+    # db.query(models.PedidoDB).delete()
 
     users = [
         {'nome': "Adailton Lima Segundo", "email": "adlima@bol.com"},
@@ -59,10 +79,10 @@ def seed_data():
         {'nome': "Atum Selvagem",         "descricao": "Atum selvagem, ideal para sashimi e pratos de peixe cru.",         "estoque": 8,   "preco": 19.99},
         {'nome': "Salmão do Atlântico",   "descricao": "Salmão do Atlântico, rico em ácidos graxos ômega-3.",              "estoque": 12,  "preco": 14.99},
         {'nome': "Linguado Fresco",       "descricao": "Linguado fresco, delicado e perfeito para pratos gourmet.",        "estoque": 7,   "preco": 24.99},
-        {'nome': "Truta Arco-Íris",       "descricao": "Truta arco-íris, saborosa e versátil em várias receitas.",         "estoque": 10,  "preco": 12.99},
+        {'nome': "Truta Arco-Íris",       "descricao": "Truta arco-íris, saborosa e versátil em várias receitas.",         "estoque": 1,   "preco": 12.99},
         {'nome': "Bacalhau do Atlântico", "descricao": "Bacalhau do Atlântico, clássico em pratos de bacalhau.",           "estoque": 20,  "preco": 29.99},
-        {'nome': "Robalo Fresco",         "descricao": "Robalo fresco, excelente para grelhados e pratos assados.",        "estoque": 18,  "preco": 16.99},
-        {'nome': "Peixe-gato de Cultivo", "descricao": "Peixe-gato de cultivo, ideal para frituras e ensopados.",          "estoque": 14,  "preco": 8.99 },
+        {'nome': "Robalo Fresco",         "descricao": "Robalo fresco, excelente para grelhados e pratos assados.",        "estoque": 1,   "preco": 16.99},
+        {'nome': "Peixe-gato de Cultivo", "descricao": "Peixe-gato de cultivo, ideal para frituras e ensopados.",          "estoque": 1,   "preco": 8.99 },
         {'nome': "Lula",                  "descricao": "Lula limpa, pronta para preparar pratos de frutos do mar.",        "estoque": 6,   "preco": 22.99}, 
         {'nome': "Camarão Fresco",        "descricao": "Camarão fresco, ótimo para pratos como paella e camarão ao alho.", "estoque": 5,   "preco": 18.99}, 
     ]
@@ -189,3 +209,23 @@ def add_pedido(usuario_id: int, pedido_create: models.PedidoCreate, db: Session 
         return pedido
     else:
         raise HTTPException(status_code=400, detail="Quantidade solicitada maior do que o estoque disponível.")
+    
+# Relatório de produto mais vendido
+@app.get("/relatorios/produto_mais_vendido/", response_model=List[ProductReport])
+def get_top_sold_products(db: Session = Depends(database.get_db)):
+    return models.get_top_sold_products(db)
+
+# Relatório de produto por cliente
+@app.get("/relatorios/produto_por_cliente/", response_model=List[ProductCustomerReport])
+def get_product_by_customer_report(db: Session = Depends(database.get_db)):
+    return models.get_product_by_customer_report(db)
+
+# Relatório de consumo médio por cliente
+@app.get("/relatorios/consumo_medio_cliente/", response_model=List[AvgConsumptionReport])
+def get_avg_consumption_by_customer_report(db: Session = Depends(database.get_db)):
+    return models.get_avg_consumption_by_customer_report(db)
+
+# Relatório de produto de baixo estoque (igual ou abaixo de 3)
+@app.get("/relatorios/produto_baixo_estoque/", response_model=List[LowStockProductReport])
+def get_low_stock_products_report(db: Session = Depends(database.get_db)):
+    return models.get_low_stock_products_report(db)
