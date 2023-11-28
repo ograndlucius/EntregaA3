@@ -6,9 +6,6 @@ from pydantic import BaseModel
 from typing import List
 from app import models
 
-
-
-
 app = FastAPI()
 
 models.Base.metadata.create_all(bind=database.engine)
@@ -119,7 +116,7 @@ def read_item(item_id: int, db: Session = Depends(database.get_db)):
     return item
 
 # Rota para atualizar um item por ID
-@app.put("/estoque/edit/{item_id}", response_model=ItemCreate)
+@app.put("/estoque/atualizar/{item_id}", response_model=ItemCreate)
 def update_item(item_id: int, item: ItemCreate, db: Session = Depends(database.get_db)):
     updated_item = models.ItemDB.update(db, item_id, item.nome, item.descricao, item.estoque, item.preco)
     if updated_item is None:
@@ -211,21 +208,21 @@ def add_pedido(usuario_id: int, pedido_create: models.PedidoCreate, db: Session 
         raise HTTPException(status_code=400, detail="Quantidade solicitada maior do que o estoque disponível.")
     
 # Relatório de produto mais vendido
-@app.get("/relatorios/produto_mais_vendido/", response_model=List[ProductReport])
+@app.get("/relatorios/maisvendido/", response_model=List[ProductReport])
 def get_top_sold_products(db: Session = Depends(database.get_db)):
     return models.get_top_sold_products(db)
 
 # Relatório de produto por cliente
-@app.get("/relatorios/produto_por_cliente/", response_model=List[ProductCustomerReport])
+@app.get("/relatorios/produtocliente/", response_model=List[ProductCustomerReport])
 def get_product_by_customer_report(db: Session = Depends(database.get_db)):
     return models.get_product_by_customer_report(db)
 
 # Relatório de consumo médio por cliente
-@app.get("/relatorios/consumo_medio_cliente/", response_model=List[AvgConsumptionReport])
+@app.get("/relatorios/consumocliente/", response_model=List[AvgConsumptionReport])
 def get_avg_consumption_by_customer_report(db: Session = Depends(database.get_db)):
     return models.get_avg_consumption_by_customer_report(db)
 
 # Relatório de produto de baixo estoque (igual ou abaixo de 3)
-@app.get("/relatorios/produto_baixo_estoque/", response_model=List[LowStockProductReport])
+@app.get("/relatorios/baixoestoque/", response_model=List[LowStockProductReport])
 def get_low_stock_products_report(db: Session = Depends(database.get_db)):
     return models.get_low_stock_products_report(db)

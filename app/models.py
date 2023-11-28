@@ -5,7 +5,9 @@ from pydantic import BaseModel
 from sqlalchemy import func, label
 from . import models
 from fastapi import Depends
-from . import database
+from app.database import get_db
+
+
 
 
 Base = declarative_base()
@@ -168,8 +170,6 @@ class LowStockProductReport(BaseModel):
     nome: str
     estoque: int
 
-    
-
 def get_top_sold_products(db: Session, top_count: int = 3):
     result = (
         db.query(models.ItemDB.nome, func.sum(models.PedidoDB.quantidade).label("quantidade_vendida"))
@@ -197,35 +197,27 @@ def get_product_by_customer_report(db: Session):
 
 
 
-def get_avg_consumption_by_customer_report(db: Session = Depends(database.get_db)) -> AvgConsumptionResponse:
+def get_avg_consumption_by_customer_report(db: Session):
     result = (
         db.query(
             UsuarioDB.nome.label("nome_cliente"),
-            func.max(ItemDB.nome).label("produto_mais_comprado"),
-            label("consumo_medio_quantidade", func.avg(PedidoDB.quantidade)),
-            label("consumo_medio_preco", func.avg(ItemDB.preco))
+            label("consumo_medio", func.avg(PedidoDB.quantidade * ItemDB.preco))
         )
-        .select_from(UsuarioDB)
         .join(PedidoDB)
         .join(ItemDB)
         .group_by(UsuarioDB.nome)
         .all()
     )
-    
+
     response_data = [
         {
             "nome_cliente": nome_cliente,
-            "produto_mais_comprado": produto_mais_comprado,
-            "consumo_medio": {
-            "quantidade": float(consumo_medio_quantidade),
-            "preco": float(consumo_medio_preco)
-            }
+            "consumo_medio": float(consumo_medio) if consumo_medio else 0.0
         }
-        for nome_cliente, produto_mais_comprado, consumo_medio_quantidade, consumo_medio_preco in result
+        for nome_cliente, consumo_medio in result
     ]
 
-    return AvgConsumptionResponse(response=response_data)
-
+    return response_data
 
 def get_low_stock_products_report(db: Session):
     result = db.query(models.ItemDB.nome, models.ItemDB.estoque).filter(models.ItemDB.estoque <= 3).all()

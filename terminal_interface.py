@@ -18,7 +18,7 @@ def show_menu():
         print("2. Visualizar detalhes de um item")
         print("3. Adicionar um novo item ao estoque")
         print("4. Atualizar informações de um item")
-        print("6. Deletar um item do estoque")
+        print("5. Deletar um item do estoque")
         print(Fore.MAGENTA + "=" * 25 + Style.RESET_ALL + Fore.YELLOW + "(Usuários)" + Fore.MAGENTA + "=" * 25)
         print(Fore.GREEN + "6. Visualizar todos os usuários")
         print("7. Visualizar detalhes de um usuário")
@@ -26,8 +26,13 @@ def show_menu():
         print("9. Deletar um usuário")
         print("10. Atualizar informações de um usuário")
         print("11. Fazer um pedido de compra")
-        print(Fore.MAGENTA+ "=" * 62 + Style.RESET_ALL)
-        print(Fore.YELLOW + "12. Sair")
+        print(Fore.MAGENTA + "=" * 25 + Style.RESET_ALL + Fore.YELLOW + "(Operações)" + Fore.MAGENTA + "=" * 25)
+        print(Fore.GREEN + "12. Relatório: Produtos Mais Vendidos")
+        print("13. Relatório: Produtos Por Cliente")
+        print("14. Relatório: Consumo Médio Por Cliente")
+        print("15. Relatório: Produtos com Baixo Estoque")
+        print(Fore.MAGENTA + "=" * 62 + Style.RESET_ALL)
+        print(Fore.YELLOW + "16. Sair")
         print(Fore.MAGENTA + "=" * 62 + Style.RESET_ALL)
 
         choice = input("Digite o número da opção desejada: ")
@@ -41,6 +46,12 @@ def show_menu():
         elif choice == "3":
             clear_terminal()
             add_new_item()
+        elif choice == "4":
+            clear_terminal()
+            update_item()
+        elif choice == "5":
+            clear_terminal()
+            delete_item()
         elif choice == "6":
             clear_terminal()
             view_all_users()
@@ -50,15 +61,9 @@ def show_menu():
         elif choice == "8":
             clear_terminal()
             add_new_user()
-        elif choice == "6":
-            clear_terminal()
-            delete_item()
         elif choice == "9":
             clear_terminal()
             delete_user()
-        elif choice == "4":
-            clear_terminal()
-            update_item()
         elif choice == "10":
             clear_terminal()
             update_user()
@@ -66,6 +71,18 @@ def show_menu():
             clear_terminal()
             make_purchase()
         elif choice == "12":
+            clear_terminal()
+            generate_most_sold_report()
+        elif choice == "13":
+            clear_terminal()
+            generate_product_by_customer_report()
+        elif choice == "14":
+            clear_terminal()
+            generate_avg_consumption_report()
+        elif choice == "15":
+            clear_terminal()
+            generate_low_stock_report()
+        elif choice == "16":
             print("Até logo!")
             break
         else:
@@ -164,7 +181,7 @@ def update_item():
     nome = input("Digite o novo nome (ou pressione Enter para manter o atual): ")
     descricao = input("Digite a nova descrição (ou pressione Enter para manter a atual): ")
     estoque = input("Digite a nova quantidade em estoque (ou pressione Enter para manter a atual): ")
-    preco = input("Digite o novo preço (ou pressione Enter para manter o atual): ")
+    preco = float(input("Digite o novo preço (ou pressione Enter para manter o atual): "))
 
     url = f'http://localhost:8000/estoque/atualizar/{item_id}'
 
@@ -205,6 +222,26 @@ def update_user():
     response = subprocess.check_output(args, text=True)
     print("Informações do usuário atualizadas com sucesso.")
 
+# Função para gerar relatório de produtos mais vendidos
+def generate_most_sold_report():
+    response = subprocess.check_output('http GET http://localhost:8000/relatorios/maisvendido/', shell=True)
+    display_response(response)
+
+# Função para gerar relatório de produtos por cliente
+def generate_product_by_customer_report():
+    response = subprocess.check_output('http GET http://localhost:8000/relatorios/produtocliente/', shell=True)
+    display_response(response)
+
+# Função para gerar relatório de consumo médio por cliente
+def generate_avg_consumption_report():
+    response = subprocess.check_output('http GET http://localhost:8000/relatorios/consumocliente/', shell=True)
+    display_response(response)
+
+# Função para gerar relatório de produtos com baixo estoque
+def generate_low_stock_report():
+    response = subprocess.check_output('http GET http://localhost:8000/relatorios/baixoestoque/', shell=True)
+    display_response(response)
+
 
 # RESPONSAVEL PELA FORMATAÇÃO DOS REPOSTAS JSON #
 def display_response(response):
@@ -226,6 +263,10 @@ def display_response(response):
             )
             print(f"{key.capitalize()}: {formatted_value}")
         print(Fore.MAGENTA + "=" * 62 + Style.RESET_ALL)
+
+
+
+
 
 if __name__ == "__main__":
     show_menu()
