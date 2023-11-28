@@ -212,7 +212,7 @@ def get_avg_consumption_by_customer_report(db: Session):
     response_data = [
         {
             "nome_cliente": nome_cliente,
-            "consumo_medio": float(consumo_medio) if consumo_medio else 0.0
+            "consumo_medio":round(float(consumo_medio), 2) if consumo_medio else 0.0
         }
         for nome_cliente, consumo_medio in result
     ]

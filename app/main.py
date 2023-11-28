@@ -59,7 +59,7 @@ def seed_data():
     db = database.SessionLocal()
     db.query(models.ItemDB).delete()
     db.query(models.UsuarioDB).delete()
-    # db.query(models.PedidoDB).delete()
+    db.query(models.PedidoDB).delete()
 
     users = [
         {'nome': "Adailton Lima Segundo", "email": "adlima@bol.com"},
