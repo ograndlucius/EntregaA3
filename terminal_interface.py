@@ -1,7 +1,7 @@
 import subprocess
 import json
 from termcolor import colored
-from colorama import Fore, Back, Style, init
+from colorama import Fore, Style, init
 init()
 
 # LIMPAR OS COMANDOS APÓS A EXECUÇÃO DE OUTRO
@@ -177,11 +177,11 @@ def display_response(response):
     
 # ATUALIZAR INFORMAÇÕES DE UM ITEM
 def update_item():
-    item_id = input("\nDigite o ID do item que deseja atualizar: ")
-    nome = input("Digite o novo nome (ou pressione Enter para manter o atual): ")
-    descricao = input("Digite a nova descrição (ou pressione Enter para manter a atual): ")
-    estoque = input("Digite a nova quantidade em estoque (ou pressione Enter para manter a atual): ")
-    preco = float(input("Digite o novo preço (ou pressione Enter para manter o atual): "))
+    item_id   = input("\nDigite o ID do item que deseja atualizar: ")
+    nome      = input("Digite o novo nome: ")
+    descricao = input("Digite a nova descrição: ")
+    estoque   = input("Digite a nova quantidade em estoque: ")
+    preco     = float(input("Digite o novo preço: "))
 
     url = f'http://localhost:8000/estoque/atualizar/{item_id}'
 
@@ -200,14 +200,13 @@ def update_item():
 
 # ATUALIZAR INFORMAÇÕES DE UM USUÁRIO
 def update_user():
-    user_id = input("\nDigite o ID do usuário que deseja atualizar: ")
-    nome = input("Digite o novo nome (ou pressione Enter para manter o atual): ")
-    email = input("Digite o novo email (ou pressione Enter para manter o atual): ")
-    senha = input("Digite a nova senha (ou pressione Enter para manter a atual): ")
-    is_admin = input("O usuário é administrador? (True/False, ou pressione Enter para manter o atual): ")
+    user_id  = input("\nDigite o ID do usuário que deseja atualizar: ")
+    nome     = input("Digite o novo nome: ")
+    email    = input("Digite o novo email: ")
+    senha    = input("Digite a nova senha: ")
+    is_admin = input("O usuário é administrador?: ")
 
     url = f'http://localhost:8000/usuarios/atualizar/{user_id}'
-
     args = ['http', 'PUT', url]
 
     if nome:
@@ -263,10 +262,6 @@ def display_response(response):
             )
             print(f"{key.capitalize()}: {formatted_value}")
         print(Fore.MAGENTA + "=" * 62 + Style.RESET_ALL)
-
-
-
-
 
 if __name__ == "__main__":
     show_menu()

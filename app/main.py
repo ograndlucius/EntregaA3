@@ -56,11 +56,7 @@ class LowStockProductReport(BaseModel):
 
 # Função para popular o banco de dados com dados de exemplo.
 def seed_data():
-    db = database.SessionLocal()
-    db.query(models.ItemDB).delete()
-    db.query(models.UsuarioDB).delete()
-    db.query(models.PedidoDB).delete()
-
+   
     users = [
         {'nome': "Adailton Lima Segundo", "email": "adlima@bol.com"},
         {'nome': "Gabriel Badas",         "email": "gbadas@globomail.com"},
