@@ -4,10 +4,6 @@ from sqlalchemy.orm import Session, relationship
 from pydantic import BaseModel
 from sqlalchemy import func, label
 from . import models
-from fastapi import Depends
-from app.database import get_db
-
-
 
 
 Base = declarative_base()
